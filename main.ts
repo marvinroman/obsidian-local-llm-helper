@@ -16,7 +16,7 @@ import {
 } from "obsidian";
 import { generateAndAppendTags } from "./src/autoTagger";
 import { UpdateNoticeModal } from "./src/updateNoticeModal";
-import { RAGManager } from './src/rag';
+import { RAGManager } from './src/ragManager';
 import { BacklinkGenerator } from './src/backlinkGenerator';
 import { RAGChatModal } from './src/ragChatModal';
 
@@ -40,6 +40,11 @@ export interface OLocalLLMSettings {
 	embeddingModelName: string;
 	braveSearchApiKey: string;
 	openAIApiKey?: string;
+	useElasticsearch: boolean;
+	elasticsearchIndexName?: string;
+	elasticsearchNodeUrl: string;
+	elasticsearchUsername: string;
+	elasticsearchPassword: string;
 }
 
 interface ConversationEntry {
@@ -64,7 +69,12 @@ const DEFAULT_SETTINGS: OLocalLLMSettings = {
 	lastVersion: "0.0.0",
 	embeddingModelName: "nomic-embed-text",
 	braveSearchApiKey: "",
-	openAIApiKey: "lm-studio"
+	openAIApiKey: "lm-studio",
+	useElasticsearch: false,
+	elasticsearchIndexName: 'obsidian-notes',
+	elasticsearchNodeUrl: 'http://localhost:9200',
+	elasticsearchUsername: '',
+	elasticsearchPassword: '',
 };
 
 const personasDict: { [key: string]: string } = {
@@ -722,6 +732,67 @@ class OLLMSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+		new Setting(containerEl)
+			.setName("Elasticsearch Integration")
+			.setDesc("Enable Elasticsearch integration for RAG (retrieval-augmented generation)")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.useElasticsearch)
+					.onChange(async (value) => {
+						this.plugin.settings.useElasticsearch = value;
+						await this.plugin.saveSettings();
+						this.display(); // Refresh the settings tab
+					})
+			);
+
+		if (this.plugin.settings.useElasticsearch) {
+			new Setting(containerEl)
+				.setName("Elasticsearch Index Name")
+				.setDesc("Name of the Elasticsearch index to use for RAG")
+				.addText((text) => text
+					.setPlaceholder("obsidian-notes")
+					.setValue(this.plugin.settings.elasticsearchIndexName || "obsidian-notes")
+					.onChange(async (value) => {
+						this.plugin.settings.elasticsearchIndexName = value;
+						await this.plugin.saveSettings();
+					})
+				);
+			new Setting(containerEl)
+				.setName("Elasticsearch Node URL")
+				.setDesc("URL of the Elasticsearch node")
+				.addText((text) => text
+					.setPlaceholder("http://localhost:9200")
+					.setValue(this.plugin.settings.elasticsearchNodeUrl)
+					.onChange(async (value) => {
+						this.plugin.settings.elasticsearchNodeUrl = value;
+						await this.plugin.saveSettings();
+					})
+				);
+
+			new Setting(containerEl)
+				.setName("Elasticsearch Username")
+				.setDesc("Username for Elasticsearch authentication")
+				.addText(text => text
+					.setPlaceholder("elasticsearch")
+					.setValue(this.plugin.settings.elasticsearchUsername || '')
+					.onChange(async (value) => {
+						this.plugin.settings.elasticsearchUsername = value;
+						await this.plugin.saveSettings();
+					})
+				);
+
+			new Setting(containerEl)
+				.setName("Elasticsearch Password")
+				.setDesc("Password for Elasticsearch authentication")
+				.addText(text => text
+					.setPlaceholder("password")
+					.setValue(this.plugin.settings.elasticsearchPassword || '')
+					.onChange(async (value) => {
+						this.plugin.settings.elasticsearchPassword = value;
+						await this.plugin.saveSettings();
+					})
+				);
+		}
 
 		// Add OpenAI API Key setting (conditional)
 		if (this.plugin.settings.providerType === 'openai') {
