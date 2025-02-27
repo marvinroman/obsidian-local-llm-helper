@@ -1,5 +1,6 @@
 import { Document } from 'langchain/document';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
+import { ElasticVectorSearch } from 'langchain/vectorstores/elasticsearch';
 import { TFile, Vault, Plugin } from 'obsidian';
 import { OllamaEmbeddings } from './ollamaEmbeddings';
 import { OpenAIEmbeddings } from './openAIEmbeddings';
@@ -9,27 +10,46 @@ import { createRetrievalChain } from "langchain/chains/retrieval";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { OLocalLLMSettings } from '../main';
+import { Client } from '@elastic/elasticsearch';
 
 const CHUNK_SIZE = 1000;
 
 export class RAGManager {
-	private vectorStore: MemoryVectorStore;
+	private vectorStore: MemoryVectorStore | ElasticVectorSearch;
 	private embeddings: OllamaEmbeddings | OpenAIEmbeddings;
 	private indexedFiles: string[] = [];
 	private provider: string;
+	private useElasticsearch: boolean;
+	private elasticsearchClient: Client | null = null;
 
 	constructor(
 		private vault: Vault,
 		private settings: OLocalLLMSettings
 	) {
 		this.provider = this.settings.providerType || 'ollama';
+		this.useElasticsearch = this.settings.useElasticsearch || false;
 
 		// Initialize embeddings based on provider
 		this.embeddings = this.provider === 'ollama'
 			? new OllamaEmbeddings(this.settings.serverAddress, this.settings.embeddingModelName)
 			: new OpenAIEmbeddings(this.settings.openAIApiKey, this.settings.embeddingModelName, this.settings.serverAddress);
 
-		this.vectorStore = new MemoryVectorStore(this.embeddings);
+		// Initialize vector store based on configuration
+		if (this.useElasticsearch) {
+			this.elasticsearchClient = new Client({
+				node: this.settings.elasticsearchNodeUrl,
+				auth: {
+					username: this.settings.elasticsearchUsername,
+					password: this.settings.elasticsearchPassword,
+				},
+			});
+			this.vectorStore = new ElasticVectorSearch(this.embeddings, {
+				client: this.elasticsearchClient,
+				indexName: this.settings.elasticsearchIndexName || 'obsidian-notes',
+			});
+		} else {
+			this.vectorStore = new MemoryVectorStore(this.embeddings);
+		}
 	}
 
 	async getRAGResponse(query: string): Promise<{ response: string, sources: string[] }> {
