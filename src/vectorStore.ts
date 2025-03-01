@@ -30,7 +30,7 @@ export class VectorStoreManager {
 
 			const clientArgs: ElasticClientArgs = {
 				client: new Client(config),
-				indexName: settings.elasticsearchIndexName ?? "test_vectorstore",
+				indexName: settings.elasticsearchIndexName ?? "obsidian-notes",
 			};
 
 			return new ElasticVectorSearch(embeddings, clientArgs);
