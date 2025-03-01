@@ -1,0 +1,15 @@
+services:
+  chroma:
+    image: chromadb/chroma
+    environment:
+      - ALLOW_RESET=true
+      - IS_PERSISTENT=TRUE
+      - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"]
+    ports:
+      - 8000:8000
+    volumes:
+      - chroma_data:/chroma/chroma_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/api/v2/heartbeat"]
+volumes:
+  chroma_data:
