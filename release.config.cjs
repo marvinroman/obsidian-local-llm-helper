@@ -51,24 +51,27 @@ module.exports = {
 			}
 		]
 		, [
-			"@semantic-release/release-notes-generator"
-			, {
-				preset: "conventionalcommits"
-				, presetConfig: {
-					types: [
-						{ type: "config", section: "Configuration Updates" } // Categorizes config updates
-						, { type: "feat", section: "Features" } // Features section
-						, { type: "fix", section: "Bug Fixes" } // Bug fixes section
-						, { type: "perf", section: "Performance Improvements" } // Performance improvements section
-						, { type: "chore", hidden: true } // Hide chore commits from release notes
-						, { type: "docs", hidden: true } // Hide documentation changes
-						, { type: "refactor", section: "Code Refactoring" } // Refactoring section
-						, { type: "style", hidden: true } // Hide style changes
-						, { type: "test", hidden: true } // Hide test changes
-					]
-				}
-			}
-		] // Generates release notes from commit history
+			"@semantic-release/release-notes-generator",
+			{
+			  preset: "conventionalcommits",
+			  presetConfig: {
+				types: [
+				  { type: "config", section: "Configuration Updates" },
+				  { type: "feat", section: "Features" },
+				  { type: "fix", section: "Bug Fixes" },
+				  { type: "perf", section: "Performance Improvements" },
+				  { type: "refactor", section: "Code Refactoring" },
+				  { type: "chore", hidden: true },
+				  { type: "docs", hidden: true },
+				  { type: "style", hidden: true },
+				  { type: "test", hidden: true },
+				  { type: "build", hidden: true },
+				  { type: "ci", hidden: true },
+				  { type: "revert", hidden: true },
+				],
+			  },
+			},
+		  ] // Generates release notes from commit history
 		, ...getCIPlatformConfiguration() // Load CI-specific plugins (GitHub or GitLab) based on the CI platform
 		, "@semantic-release/changelog"
 		, [ // Analyzes commit messages to determine version bumps
