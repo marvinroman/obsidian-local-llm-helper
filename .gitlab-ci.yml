@@ -1,0 +1,21 @@
+image: node:18
+
+stages:
+  - release
+
+release:
+  stage: release
+  only:
+    - main
+  script:
+    - npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/gitlab conventional-changelog-conventionalcommits@7.0.2
+	- npm ci
+	- npm run build
+    - npx semantic-release
+  variables:
+    GITLAB_AUTH_TOKEN: $CI_PUSH_TOKEN
+    GIT_COMMITTER_EMAIL: $GIT_AUTHOR_EMAIL
+    GIT_COMMITTER_NAME: $GIT_AUTHOR_NAME
+    NPM_TOKEN: $GITLAB_TOKEN
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
