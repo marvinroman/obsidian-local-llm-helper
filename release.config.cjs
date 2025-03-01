@@ -1,4 +1,3 @@
-
 /**
  * Determines the CI platform (GitHub Actions or GitLab CI) based on the environment variables.
  * Returns the corresponding semantic-release plugin configuration.
@@ -23,8 +22,8 @@ const getCIPlatformConfiguration = () => {
 };
 
 module.exports = {
-	"branches": ["main"],
-	"plugins": [
+	branches: ["main"]
+	, plugins: [
 		[
 			"@semantic-release/commit-analyzer"
 			, {
@@ -37,28 +36,28 @@ module.exports = {
 					, { type: "refactor", release: "patch" } // Refactors treated as patches
 				]
 			}
-		] // Analyzes commit messages to determine version bumps
-		[
-		"semantic-release-replace-plugin"
-		, {
-			replacements: [
-				{
-					files: ["manifest.json"]
-					, from: "\"version\": \".*\"" // Regex pattern to match the current version field
-					, to: "\"version\": \"$${nextRelease.version}\"" // Replace the version with the new release version
-					, results: [
-						{
-							file: "manifest.json"
-							, hasChanged: true
-							, numMatches: 1
-							, numReplacements: 1
-						}
-					]
-					, countMatches: true // Ensure that at least one replacement has occurred
-				}
-			]
-		}
-		], // Replaces version in the manifest.json file
+		]
+		, [ // Analyzes commit messages to determine version bumps
+			"semantic-release-replace-plugin"
+			, {
+				replacements: [
+					{
+						files: ["manifest.json"]
+						, from: '"version": ".*"' // Regex pattern to match the current version field
+						, to: '"version": "$${nextRelease.version}"' // Replace the version with the new release version
+						, results: [
+							{
+								file: "manifest.json"
+								, hasChanged: true
+								, numMatches: 1
+								, numReplacements: 1
+							}
+						]
+						, countMatches: true // Ensure that at least one replacement has occurred
+					}
+				]
+			}
+		] // Replaces version in the manifest.json file
 		, [
 			"@semantic-release/release-notes-generator"
 			, {
@@ -79,12 +78,7 @@ module.exports = {
 			}
 		] // Generates release notes from commit history
 		, "@semantic-release/changelog"
-		, [
-			"@semantic-release/git"
-			, {
-				assets: ["CHANGELOG.md"]
-			}
-		] // Commits only changelog
+		, ["@semantic-release/git", { assets: ["CHANGELOG.md"] }] // Commits only changelog
 		, ...getCIPlatformConfiguration() // Load CI-specific plugins (GitHub or GitLab) based on the CI platform
 	]
-}
+};
