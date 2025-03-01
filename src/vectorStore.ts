@@ -33,7 +33,7 @@ export class VectorStoreManager {
 				indexName: settings.elasticsearchIndexName ?? "test_vectorstore",
 			};
 
-			const vectorStore = new ElasticVectorSearch(embeddings, clientArgs);
+			return new ElasticVectorSearch(embeddings, clientArgs);
 		}
 		return new MemoryVectorStore(embeddings);
 	}
