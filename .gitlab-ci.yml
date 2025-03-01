@@ -1,21 +1,32 @@
-image: node:18
+image: node:20-alpine
 
 stages:
   - release
 
+cache:
+  - key:
+      files:
+        - "package-lock.json"
+    paths:
+      - node_modules/
+    policy: pull-push
+
+variables:
+  GITLAB_AUTH_TOKEN: $CI_PUSH_TOKEN
+  GIT_COMMITTER_EMAIL: $GIT_AUTHOR_EMAIL
+  GIT_COMMITTER_NAME: $GIT_AUTHOR_NAME
+  NPM_TOKEN: $GITLAB_TOKEN
+
 release:
   stage: release
-  only:
-    - main
+  before_script:
+    - |
+      if [ ! -d "node_modules" ]; then
+        echo "Cache restoration failed. Recreating cache..."
+        rm -rf node_modules/
+        npm ci
+      fi
   script:
-    - npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/gitlab conventional-changelog-conventionalcommits@7.0.2
     - npm ci
     - npm run build
     - npx semantic-release
-  variables:
-    GITLAB_AUTH_TOKEN: $CI_PUSH_TOKEN
-    GIT_COMMITTER_EMAIL: $GIT_AUTHOR_EMAIL
-    GIT_COMMITTER_NAME: $GIT_AUTHOR_NAME
-    NPM_TOKEN: $GITLAB_TOKEN
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
