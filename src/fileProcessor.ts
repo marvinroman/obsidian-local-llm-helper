@@ -1,13 +1,15 @@
 import { TFile, Vault } from 'obsidian';
 import { Document } from 'langchain/document';
-import { MemoryVectorStore, ElasticVectorSearch } from './vectorStore';
+import { ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch';
+import { MemoryVectorStore } from 'langchain/vectorstores/memory';
+import { Chroma } from "@langchain/community/vectorstores/chroma";
 
 const CHUNK_SIZE = 1000;
 
 export class FileProcessor {
 	constructor(
 		private vault: Vault,
-		private vectorStore: MemoryVectorStore | ElasticVectorSearch
+		private vectorStore: MemoryVectorStore | ElasticVectorSearch | Chroma
 	) { }
 
 	async processFiles(files: TFile[], progressCallback: (progress: number) => void): Promise<string[]> {
@@ -25,7 +27,7 @@ export class FileProcessor {
 					metadata: { source: file.path, chunk: j },
 				}));
 
-				await this.vectorStore.addDocuments(docs);
+				await this.vectorStore.addDocuments(docs, { ids: docs.map((d, k) => `${indexedFiles.length + k + 1}`) });
 				indexedFiles.push(file.path);
 			} catch (error) {
 				console.error(`Error indexing file ${file.path}:`, error);

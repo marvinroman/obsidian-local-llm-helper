@@ -1,12 +1,15 @@
 import { Vault } from 'obsidian';
 import { OLocalLLMSettings } from '../main';
 import { EmbeddingManager, OpenAIEmbeddings, OllamaEmbeddings } from './embeddings';
-import { VectorStoreManager, MemoryVectorStore, ElasticVectorSearch } from './vectorStore';
+import { VectorStoreManager } from './vectorStore';
+import { ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch';
+import { MemoryVectorStore } from 'langchain/vectorstores/memory';
+import { Chroma } from "@langchain/community/vectorstores/chroma";
 import { FileProcessor } from './fileProcessor';
 import { QueryHandler } from './queryHandler';
 
 export class RAGManager {
-	private vectorStore: MemoryVectorStore | ElasticVectorSearch;
+	private vectorStore: MemoryVectorStore | ElasticVectorSearch | Chroma;
 	private embeddings: OpenAIEmbeddings | OllamaEmbeddings;
 	private indexedFiles: string[] = [];
 

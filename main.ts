@@ -46,6 +46,11 @@ export interface OLocalLLMSettings {
 	elasticsearchUsername: string;
 	elasticsearchPassword: string;
 	elasticsearchApiKey?: string;
+
+	// ChromaDB settings 
+	useChromadb: boolean;
+	chromadbCollection?: string;
+	chromadbUrl?: string;
 }
 
 interface ConversationEntry {
@@ -77,6 +82,9 @@ const DEFAULT_SETTINGS: OLocalLLMSettings = {
 	elasticsearchUsername: '',
 	elasticsearchPassword: '',
 	elasticsearchApiKey: '',
+	useChromadb: false,
+	chromadbCollection: "obsidian-notes",
+	chromadbUrl: "http://127.0.0.1:8000",
 };
 
 const personasDict: { [key: string]: string } = {
@@ -668,7 +676,7 @@ class OLLMSettingTab extends PluginSettingTab {
 
 		//new settings for response formatting boolean default false
 
-		const responseFormattingToggle = new Setting(containerEl)
+		new Setting(containerEl)
 			.setName("Response Formatting")
 			.setDesc("Enable to format the response into a separate block")
 			.addToggle((toggle) =>
@@ -734,6 +742,46 @@ class OLLMSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+
+		new Setting(containerEl)
+			.setName("ChromaDB integration")
+			.setDesc("Enable ChromaDB integration for RAG (retrieval-augmented generation)")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.useChromadb)
+					.onChange(async (value) => {
+						this.plugin.settings.useChromadb = value;
+						await this.plugin.saveSettings();
+						this.display(); // Refresh the settings tab
+					})
+			);
+
+		if (this.plugin.settings.useChromadb) {
+			new Setting(containerEl)
+				.setName("ChromaDB Collection Name")
+				.setDesc("Name of the ChromaDB collection to use for RAG")
+				.addText((text) => text
+					.setPlaceholder("obsidian-notes")
+					.setValue(this.plugin.settings.chromadbCollection || "obsidian-notes")
+					.onChange(async (value) => {
+						this.plugin.settings.chromadbCollection = value;
+						await this.plugin.saveSettings();
+					})
+				);
+
+			new Setting(containerEl)
+				.setName("ChromaDB URL")
+				.setDesc("URL of the ChromaDB server")
+				.addText((text) => text
+					.setPlaceholder("http://127.0.0.1:8000")
+					.setValue(this.plugin.settings.chromadbUrl || "http://127.0.0.1:8000")
+					.onChange(async (value) => {
+						this.plugin.settings.chromadbUrl = value;
+						await this.plugin.saveSettings();
+					})
+				);
+		}
+
 		new Setting(containerEl)
 			.setName("Elasticsearch Integration")
 			.setDesc("Enable Elasticsearch integration for RAG (retrieval-augmented generation)")
