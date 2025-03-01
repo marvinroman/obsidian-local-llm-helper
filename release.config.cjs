@@ -8,17 +8,26 @@
  *                     - An empty array `[]` for unknown CI platforms or local environments
  */
 const getCIPlatformConfiguration = () => {
-	const assets = [
-		{path: "main.js", type: "package", target: "generic_package"}
-		, {path: "styles.css", type: "package", target: "generic_package"}
-		, {path: "manifest.json", type: "package", target: "generic_package"}
-	];
 	if (process.env.GITHUB_ACTIONS) {
 		// Use the GitHub plugin when running on GitHub Actions
-		return ["@semantic-release/github", { assets }];
+		return ["@semantic-release/github", {
+			assets: [
+				{ path: "main.js", "label": "Obsidian Plugin" }
+				, { path: "styles.css", "label": "Obsidian Plugin" }
+				, { path: "manifest.json", "label": "Obsidian Plugin" }
+			]
+		}
+	];
 	} else if (process.env.GITLAB_CI) {
 		// Use the GitLab plugin when running on GitLab CI
-		return ["@semantic-release/gitlab", { assets }];
+		return ["@semantic-release/gitlab", {
+			assets: [
+				{ path: "main.js", type: "package", target: "generic_package" }
+				, { path: "styles.css", type: "package", target: "generic_package" }
+				, { path: "manifest.json", type: "package", target: "generic_package" }
+			]
+		}
+	];
 	} else {
 		// Return an empty array if the CI environment is unknown or a local environment
 		return [];
@@ -48,7 +57,7 @@ module.exports = {
 					{
 						files: ["manifest.json"]
 						, from: '"version": ".*"' // Regex pattern to match the current version field
-						, to: '"version": "$${nextRelease.version}"' // Replace the version with the new release version
+						, to: '"version": "${nextRelease.version}"' // Replace the version with the new release version
 						, results: [
 							{
 								file: "manifest.json"
