@@ -1,3 +1,9 @@
+## [2.4.1](https://github.com/marvinroman/obsidian-local-llm-helper/compare/v2.4.0...v2.4.1) (2025-03-01)
+
+### Bug Fixes
+
+* semantic-release had wrong version after merge ([3cb2c7b](https://github.com/marvinroman/obsidian-local-llm-helper/commit/3cb2c7b7ab2f086ed93f3743a6a8cdb3510b3190))
+
 ## 2.4.0 (2025-03-01)
 
 ### ⚠ BREAKING CHANGES
