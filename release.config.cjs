@@ -8,7 +8,11 @@
  *                     - An empty array `[]` for unknown CI platforms or local environments
  */
 const getCIPlatformConfiguration = () => {
-	const assets = [["main.js", "styles.css", "manifest.json", "!**/*"]];
+	const assets = [
+		{path: "main.js", type: "package", target: "generic_package"}
+		, {path: "styles.css", type: "package", target: "generic_package"}
+		, {path: "manifest.json", type: "package", target: "generic_package"}
+	];
 	if (process.env.GITHUB_ACTIONS) {
 		// Use the GitHub plugin when running on GitHub Actions
 		return ["@semantic-release/github", { assets }];
@@ -78,7 +82,7 @@ module.exports = {
 			}
 		] // Generates release notes from commit history
 		, "@semantic-release/changelog"
-		, ["@semantic-release/git", { assets: ["CHANGELOG.md"]}] // TODO , "manifest.json"] }] // Commits only changelog and manifest
+		, ["@semantic-release/git", { assets: ["CHANGELOG.md", "manifest.json"] }] // Commits only changelog and manifest
 		, ...getCIPlatformConfiguration() // Load CI-specific plugins (GitHub or GitLab) based on the CI platform
 	]
 };
