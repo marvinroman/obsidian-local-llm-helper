@@ -45,6 +45,7 @@ export interface OLocalLLMSettings {
 	elasticsearchNodeUrl: string;
 	elasticsearchUsername: string;
 	elasticsearchPassword: string;
+	elasticsearchApiKey?: string;
 }
 
 interface ConversationEntry {
@@ -72,9 +73,10 @@ const DEFAULT_SETTINGS: OLocalLLMSettings = {
 	openAIApiKey: "lm-studio",
 	useElasticsearch: false,
 	elasticsearchIndexName: 'obsidian-notes',
-	elasticsearchNodeUrl: 'http://localhost:9200',
+	elasticsearchNodeUrl: 'https://127.0.0.1:9200',
 	elasticsearchUsername: '',
 	elasticsearchPassword: '',
+	elasticsearchApiKey: '',
 };
 
 const personasDict: { [key: string]: string } = {
@@ -761,7 +763,7 @@ class OLLMSettingTab extends PluginSettingTab {
 				.setName("Elasticsearch Node URL")
 				.setDesc("URL of the Elasticsearch node")
 				.addText((text) => text
-					.setPlaceholder("http://localhost:9200")
+					.setPlaceholder("https://127.0.0.1:9200")
 					.setValue(this.plugin.settings.elasticsearchNodeUrl)
 					.onChange(async (value) => {
 						this.plugin.settings.elasticsearchNodeUrl = value;
@@ -789,6 +791,18 @@ class OLLMSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.elasticsearchPassword || '')
 					.onChange(async (value) => {
 						this.plugin.settings.elasticsearchPassword = value;
+						await this.plugin.saveSettings();
+					})
+				);
+
+			new Setting(containerEl)
+				.setName("Elasticsearch API Key")
+				.setDesc("API Key for Elasticsearch authentication")
+				.addText(text => text
+					.setPlaceholder("password")
+					.setValue(this.plugin.settings.elasticsearchApiKey || '')
+					.onChange(async (value) => {
+						this.plugin.settings.elasticsearchApiKey = value;
 						await this.plugin.saveSettings();
 					})
 				);
