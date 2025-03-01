@@ -97,5 +97,4 @@ module.exports = {
 		] // Replaces version in the manifest.json file
 		, ["@semantic-release/git", { assets: ["CHANGELOG.md", "manifest.json"] }] // Commits only changelog and manifest
 	]
-    , "repositoryUrl": `${process.env.CI_PROJECT_URL}.git` // Git repository URL for the project
 };
