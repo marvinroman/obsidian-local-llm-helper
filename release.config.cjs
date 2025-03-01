@@ -10,24 +10,24 @@
 const getCIPlatformConfiguration = () => {
 	if (process.env.GITHUB_ACTIONS) {
 		// Use the GitHub plugin when running on GitHub Actions
-		return ["@semantic-release/github", {
+		return [["@semantic-release/github", {
 			assets: [
 				{ path: "main.js" }
 				, { path: "styles.css" }
 				, { path: "manifest.json" }
 			]
 		}
-		];
+		]];
 	} else if (process.env.GITLAB_CI) {
 		// Use the GitLab plugin when running on GitLab CI
-		return ["@semantic-release/gitlab", {
+		return [["@semantic-release/gitlab", {
 			assets: [
 				{ path: "main.js", type: "other", target: "project_upload" }
 				, { path: "styles.css", type: "other", target: "project_upload" }
 				, { path: "manifest.json", type: "other", target: "project_upload" }
 			]
 		}
-		];
+		]];
 	} else {
 		// Return an empty array if the CI environment is unknown or a local environment
 		return [];
