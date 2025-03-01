@@ -12,22 +12,22 @@ const getCIPlatformConfiguration = () => {
 		// Use the GitHub plugin when running on GitHub Actions
 		return ["@semantic-release/github", {
 			assets: [
-				{ path: "main.js", "label": "Obsidian Plugin" }
-				, { path: "styles.css", "label": "Obsidian Plugin" }
-				, { path: "manifest.json", "label": "Obsidian Plugin" }
+				{ path: "main.js" }
+				, { path: "styles.css" }
+				, { path: "manifest.json" }
 			]
 		}
-	];
+		];
 	} else if (process.env.GITLAB_CI) {
 		// Use the GitLab plugin when running on GitLab CI
 		return ["@semantic-release/gitlab", {
 			assets: [
-				{ path: "main.js", type: "package", target: "generic_package" }
-				, { path: "styles.css", type: "package", target: "generic_package" }
-				, { path: "manifest.json", type: "package", target: "generic_package" }
+				{ path: "main.js", type: "other", target: "project_upload" }
+				, { path: "styles.css", type: "other", target: "project_upload" }
+				, { path: "manifest.json", type: "other", target: "project_upload" }
 			]
 		}
-	];
+		];
 	} else {
 		// Return an empty array if the CI environment is unknown or a local environment
 		return [];
@@ -50,6 +50,27 @@ module.exports = {
 				]
 			}
 		]
+		, [
+			"@semantic-release/release-notes-generator"
+			, {
+				preset: "conventionalcommits"
+				, presetConfig: {
+					types: [
+						{ type: "config", section: "Configuration Updates" } // Categorizes config updates
+						, { type: "feat", section: "Features" } // Features section
+						, { type: "fix", section: "Bug Fixes" } // Bug fixes section
+						, { type: "perf", section: "Performance Improvements" } // Performance improvements section
+						, { type: "chore", hidden: true } // Hide chore commits from release notes
+						, { type: "docs", hidden: true } // Hide documentation changes
+						, { type: "refactor", section: "Code Refactoring" } // Refactoring section
+						, { type: "style", hidden: true } // Hide style changes
+						, { type: "test", hidden: true } // Hide test changes
+					]
+				}
+			}
+		] // Generates release notes from commit history
+		, ...getCIPlatformConfiguration() // Load CI-specific plugins (GitHub or GitLab) based on the CI platform
+		, "@semantic-release/changelog"
 		, [ // Analyzes commit messages to determine version bumps
 			"semantic-release-replace-plugin"
 			, {
@@ -71,27 +92,6 @@ module.exports = {
 				]
 			}
 		] // Replaces version in the manifest.json file
-		, [
-			"@semantic-release/release-notes-generator"
-			, {
-				preset: "conventionalcommits"
-				, presetConfig: {
-					types: [
-						{ type: "config", section: "Configuration Updates" } // Categorizes config updates
-						, { type: "feat", section: "Features" } // Features section
-						, { type: "fix", section: "Bug Fixes" } // Bug fixes section
-						, { type: "perf", section: "Performance Improvements" } // Performance improvements section
-						, { type: "chore", hidden: true } // Hide chore commits from release notes
-						, { type: "docs", hidden: true } // Hide documentation changes
-						, { type: "refactor", section: "Code Refactoring" } // Refactoring section
-						, { type: "style", hidden: true } // Hide style changes
-						, { type: "test", hidden: true } // Hide test changes
-					]
-				}
-			}
-		] // Generates release notes from commit history
-		, "@semantic-release/changelog"
 		, ["@semantic-release/git", { assets: ["CHANGELOG.md", "manifest.json"] }] // Commits only changelog and manifest
-		, ...getCIPlatformConfiguration() // Load CI-specific plugins (GitHub or GitLab) based on the CI platform
 	]
 };
