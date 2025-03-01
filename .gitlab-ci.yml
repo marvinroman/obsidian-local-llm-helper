@@ -9,8 +9,8 @@ release:
     - main
   script:
     - npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/gitlab conventional-changelog-conventionalcommits@7.0.2
-	- npm ci
-	- npm run build
+    - npm ci
+    - npm run build
     - npx semantic-release
   variables:
     GITLAB_AUTH_TOKEN: $CI_PUSH_TOKEN
