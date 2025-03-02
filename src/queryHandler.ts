@@ -5,7 +5,9 @@ import { Document } from 'langchain/document';
 import { Ollama } from "@langchain/ollama";
 import { OpenAI } from "@langchain/openai";
 import { OLocalLLMSettings } from '../main';
-import { MemoryVectorStore, ElasticVectorSearch } from './vectorStore';
+import { ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch';
+import { MemoryVectorStore } from 'langchain/vectorstores/memory';
+import { Chroma } from "@langchain/community/vectorstores/chroma";
 
 export class QueryHandler {
 	static async createLLM(settings: OLocalLLMSettings) {
@@ -25,7 +27,7 @@ export class QueryHandler {
 
 	static async generateResponse(
 		query: string,
-		vectorStore: MemoryVectorStore | ElasticVectorSearch,
+		vectorStore: MemoryVectorStore | ElasticVectorSearch | Chroma,
 		llm: Ollama | OpenAI
 	) {
 		const promptTemplate = PromptTemplate.fromTemplate(
