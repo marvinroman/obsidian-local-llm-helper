@@ -1,4 +1,4 @@
-import { RAGManager } from './rag';
+import { RAGManager } from './ragManager';
 import { TFile, Vault } from 'obsidian';
 
 export class BacklinkGenerator {

@@ -1,6 +1,6 @@
 import { App, Modal, TextComponent, ButtonComponent, Notice, setIcon } from "obsidian";
 import { OLocalLLMSettings } from "../main";
-import { RAGManager } from "./rag";
+import { RAGManager } from "./ragManager";
 
 export class RAGChatModal extends Modal {
 	result: string = "";
