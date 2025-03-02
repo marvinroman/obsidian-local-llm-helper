@@ -1,3 +1,26 @@
+## [2.6.0](https://github.com/marvinroman/obsidian-local-llm-helper/compare/v2.5.0...v2.6.0) (2025-03-02)
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Node.js version requirement increased to >=18 for several packages
+
+### Features
+
+* **deps:** update dependencies and add new packages ([9537b59](https://github.com/marvinroman/obsidian-local-llm-helper/commit/9537b59eeba683580666cfecfaebad96937dbdd4))
+* **devops:** add docker-compose and env template for elasticsearch ([6c215fa](https://github.com/marvinroman/obsidian-local-llm-helper/commit/6c215fa3791f26814b8dcf21a8bda17c5d449783))
+* **rag:** add Elasticsearch vector store support ([57e4436](https://github.com/marvinroman/obsidian-local-llm-helper/commit/57e4436151eb4db4d63578fb74c559f7b6f922c9))
+* **settings:** add elasticsearch api key support ([8435727](https://github.com/marvinroman/obsidian-local-llm-helper/commit/843572753dad2683525f7165219fde9ad55bbce4))
+* **settings:** add Elasticsearch configuration settings ([49ee7c0](https://github.com/marvinroman/obsidian-local-llm-helper/commit/49ee7c00f8090a4fa72331f2c3ecbcc7208d686d))
+
+### Bug Fixes
+
+* :bug: elastic vector store wasn't returning ([9dce2ef](https://github.com/marvinroman/obsidian-local-llm-helper/commit/9dce2ef3324fe839cc0f540504a4d6ce9f369b5a))
+
+### Code Refactoring
+
+* **backlink-generator:** update imports and improve modularity ([ca3f2cd](https://github.com/marvinroman/obsidian-local-llm-helper/commit/ca3f2cdbadbba756efcb0cf92d39d34503fba766))
+* **ragManager:** modularize RAGManager into specialized components ([c36d860](https://github.com/marvinroman/obsidian-local-llm-helper/commit/c36d86028dff476945d65b115bffc4f6ed8b86bd))
+
 ## [2.5.0](https://github.com/marvinroman/obsidian-local-llm-helper/compare/v2.4.2...v2.5.0) (2025-03-02)
 
 ### Features
