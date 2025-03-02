@@ -1,3 +1,15 @@
+## [2.7.0](https://github.com/marvinroman/obsidian-local-llm-helper/compare/v2.6.0...v2.7.0) (2025-03-02)
+
+### ⚠ BREAKING CHANGES
+
+* **vectorstore:** Vector store implementations now include ChromaDB option
+* **settings:** Vector store implementations now include ChromaDB option
+
+### Features
+
+* **settings:** add ChromaDB integration for RAG ([3150733](https://github.com/marvinroman/obsidian-local-llm-helper/commit/31507337d07eeee077fcbc4599c53d3631113b60))
+* **vectorstore:** add ChromaDB integration and update dependencies ([b413146](https://github.com/marvinroman/obsidian-local-llm-helper/commit/b4131463a065c22eed510506ea89266748d3c059))
+
 ## [2.6.0](https://github.com/marvinroman/obsidian-local-llm-helper/compare/v2.5.0...v2.6.0) (2025-03-02)
 
 ### ⚠ BREAKING CHANGES
